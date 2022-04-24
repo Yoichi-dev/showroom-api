@@ -29,6 +29,7 @@ app.use((req, res, next) => {
     || /^https:\/\/musica-streaming\.netlify\.app$/.test(origin)
     || /^https:\/\/yukino-comment\.netlify\.app$/.test(origin)
     || /^https:\/\/tem-comment\.netlify\.app$/.test(origin)
+    || /^https:\/\/showroom-app-api\.herokuapp\.com$/.test(origin)
     || encodeURI(req.query.key) === ENV.API_KEY) {
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
