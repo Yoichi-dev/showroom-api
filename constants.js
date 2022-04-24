@@ -7,6 +7,8 @@ const constants = {
       giftList: "https://www.showroom-live.com/api/live/gift_list?room_id=",
       stageUserList: "https://www.showroom-live.com/api/live/stage_user_list?room_id=",
       liveInfo: "https://www.showroom-live.com/api/live/live_info?room_id=",
+      commentLog: "https://www.showroom-live.com/api/live/comment_log?room_id=",
+      giftLog: "https://www.showroom-live.com/api/live/gift_log?room_id=",
     },
     room: {
       profile: "https://www.showroom-live.com/api/room/profile?room_id=",

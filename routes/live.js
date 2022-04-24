@@ -39,4 +39,24 @@ router.get('/live_info/:room_id', [check('room_id').not().isEmpty().isNumeric()]
   res.json(liveInfo);
 }));
 
+/* コメントログ */
+router.get('/comment_log/:room_id', [check('room_id').not().isEmpty().isNumeric()], common.asyncWrapper(async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const commentLog = await common.exeApi(`${constants.url.live.commentLog}${req.params.room_id}`);
+  res.json(commentLog);
+}));
+
+/* ギフトログ */
+router.get('/gift_log/:room_id', [check('room_id').not().isEmpty().isNumeric()], common.asyncWrapper(async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const giftLog = await common.exeApi(`${constants.url.live.giftLog}${req.params.room_id}`);
+  res.json(giftLog);
+}));
+
 module.exports = router;
