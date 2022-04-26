@@ -1,11 +1,5 @@
 const request = require('then-request');
 
-exports.dbConnect = connection => {
-  return new Promise((resolve, reject) => {
-    connection.connect((err) => err ? reject() : resolve());
-  });
-}
-
 exports.asyncWrapper = fn => {
   return (req, res, next) => {
     return fn(req, res, next).catch(next);
