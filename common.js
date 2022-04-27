@@ -1,4 +1,12 @@
+require('dotenv').config();
+const ENV = process.env;
 const request = require('then-request');
+
+exports.dbConnect = connection => {
+  return new Promise((resolve, reject) => {
+    connection.connect((err) => err ? reject() : resolve());
+  });
+}
 
 exports.asyncWrapper = fn => {
   return (req, res, next) => {
@@ -17,3 +25,31 @@ exports.exeApi = url => {
     });
   });
 };
+
+exports.exeSql = (connection, sql) => {
+  return new Promise((resolve, reject) => {
+    connection.query(sql, (err, rows, fields) => {
+      if (err) reject();
+      resolve(rows);
+    });
+  });
+}
+
+exports.exeSqlPlace = (connection, sql, conditions) => {
+  return new Promise((resolve, reject) => {
+    connection.query(sql, conditions, (err, rows, fields) => {
+      if (err) reject();
+      resolve(rows);
+    });
+  });
+}
+
+exports.mysqlSetting = () => {
+  return {
+    host: ENV.DB_HOST,
+    user: ENV.DB_USER,
+    password: ENV.DB_PASSWORD,
+    database: ENV.DB_DATABASE,
+    charset: ENV.DB_CHARSET
+  };
+}

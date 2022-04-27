@@ -26,6 +26,16 @@ const constants = {
   },
   line: {
     api: "https://notify-api.line.me/api/notify"
+  },
+  sql: {
+    eventList: "SELECT * FROM events ORDER BY started_at DESC",
+    holdEventList: "SELECT * FROM events WHERE started_at < ? AND ended_at > ? ORDER BY started_at DESC",
+    endEventList: "SELECT * FROM events WHERE ended_at <= ? ORDER BY started_at DESC",
+    eventDataList: "SELECT * FROM events WHERE event_id = ?",
+    eventUserList: "select a.event_id as event_id, a.room_id as room_id, b.room_name as room_name, b.room_url_key as room_url_key, a.`rank` as juni FROM (select event_id, room_id, get_at, follower_num, gap, next_rank, point, `rank` FROM event_history WHERE event_id = ? and get_at = (select max(get_at) FROM event_history WHERE event_id = ?)) a left join users b on a.room_id = b.room_id order by a.`rank`",
+    historyList: "SELECT * FROM event_history WHERE event_id = ? ORDER BY room_id, get_at",
+    userHistoryList: "SELECT * FROM event_history WHERE event_id = ? and room_id = ? ORDER BY get_at",
+    aggregateList: "select * FROM event_history WHERE event_id = ? and get_at = (select max(get_at) FROM event_history WHERE event_id = ?)",
   }
 }
 

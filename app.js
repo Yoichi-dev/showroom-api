@@ -10,7 +10,7 @@ require('dotenv').config();
 const ENV = process.env;
 
 const logDirectory = path.join(__dirname, './log');
-if (!ENV.HEROKU) {
+if (ENV.HEROKU != "HEROKU") {
   fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 }
 
@@ -20,6 +20,8 @@ const minecraftRouter = require('./routes/minecraft');
 const otherRouter = require('./routes/other');
 const roomRouter = require('./routes/room');
 const usersRouter = require('./routes/users');
+const eventsRouter = require('./routes/events');
+const historyRouter = require('./routes/history');
 
 const app = express();
 
@@ -42,21 +44,23 @@ app.use((req, res, next) => {
   }
 });
 
-if (!ENV.HEROKU) {
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+if (ENV.HEROKU != "HEROKU") {
   const accessLogStream = rfs('access.log', {
     interval: '1d',
     compress: 'gzip',
     path: logDirectory
   });
   app.use(logger('combined', { stream: accessLogStream }))
+  app.use('/events', eventsRouter);
+  app.use('/history', historyRouter);
 } else {
   app.use(logger('combined'));
 }
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/live', liveRouter);
