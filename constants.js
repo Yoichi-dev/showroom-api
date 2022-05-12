@@ -26,7 +26,7 @@ const constants = {
   },
   line: {
     api: "https://notify-api.line.me/api/notify"
-  }
+  },
 }
 
 module.exports = Object.freeze(constants);

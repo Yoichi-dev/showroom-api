@@ -9,6 +9,27 @@ router.get('/', function (req, res, next) {
   res.json({ title: 'Live API' });
 });
 
+/* オンライブ */
+router.get('/onlives', common.asyncWrapper(async (req, res, next) => {
+  const onliveList = await common.exeApi(`${constants.url.live.onlives}`);
+  res.json(onliveList);
+}));
+
+/* プレミアムライブ */
+router.get('/premium', common.asyncWrapper(async (req, res, next) => {
+  const onliveList = await common.exeApi(`${constants.url.live.onlives}`);
+  const premiumList = []
+  for (let i = 0; i < onliveList.onlives.length; i++) {
+    let check = onliveList.onlives[i].lives.find(
+      (e) => e.premium_room_type === 1
+    )
+    if (check !== undefined) {
+      premiumList.push(check)
+    }
+  }
+  res.json(premiumList);
+}));
+
 /* ギフトリスト */
 router.get('/gift_list/:room_id', [check('room_id').not().isEmpty().isNumeric()], common.asyncWrapper(async (req, res, next) => {
   const errors = validationResult(req);
