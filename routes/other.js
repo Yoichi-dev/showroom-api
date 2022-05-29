@@ -6,9 +6,33 @@ const constants = require('../constants');
 const common = require('../common');
 const { check, validationResult } = require('express-validator');
 
+let logIp = [];
+
 /* 他API */
 router.get('/', function (req, res, next) {
   res.json({ title: 'Other API' });
+});
+
+/* 初期化検知 */
+router.get('/delete', function (req, res, next) {
+  // IP取得
+  const ip = getIP(req);
+  if (ip !== '0.0.0.0') {
+    if (logIp.some((e) => e.accessIp === ip)) {
+      logIp.forEach(elm => {
+        if (elm.accessIp === ip) {
+          elm.count++;
+        }
+      });
+    } else {
+      logIp.push({
+        accessIp: ip,
+        count: 1
+      });
+    }
+  }
+  console.log(logIp)
+  res.json({ title: 'delete' });
 });
 
 /* ブロードキャストキー取得 */
@@ -23,6 +47,14 @@ router.get('/broadcast/:room_url_key', [check('room_url_key').not().isEmpty()], 
 
 /* ルーム検索 */
 router.get('/search', [check('keyword').not().isEmpty()], common.asyncWrapper(async (req, res, next) => {
+  // 初期化制限
+  const ip = getIP(req);
+  for (let i = 0; i < logIp.length; i++) {
+    if (logIp[i].accessIp === ip && logIp[i].count > 2) {
+      return res.status(401).json({ errors: '初期化回数制限に達しました' });
+    }
+  }
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -53,5 +85,21 @@ router.get('/search', [check('keyword').not().isEmpty()], common.asyncWrapper(as
     res.json(searchData);
   }
 }));
+
+function getIP(req) {
+  if (req.headers['x-forwarded-for']) {
+    return req.headers['x-forwarded-for'];
+  }
+  if (req.connection && req.connection.remoteAddress) {
+    return req.connection.remoteAddress;
+  }
+  if (req.connection.socket && req.connection.socket.remoteAddress) {
+    return req.connection.socket.remoteAddress;
+  }
+  if (req.socket && req.socket.remoteAddress) {
+    return req.socket.remoteAddress;
+  }
+  return '0.0.0.0';
+};
 
 module.exports = router;
