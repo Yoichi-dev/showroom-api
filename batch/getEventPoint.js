@@ -24,6 +24,12 @@ const getAt = Math.floor(new Date().getTime() / 1000);
 
 (async () => {
   console.log('処理開始');
+  // 時間チェック(1時～6時は処理を行わない)
+  const nowHours = new Date().getHours();
+  if (nowHours > 1 && nowHours < 7) {
+    return
+  }
+
   try {
     // DB接続
     await common.dbConnect(connection);
