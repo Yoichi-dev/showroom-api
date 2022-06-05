@@ -86,6 +86,36 @@ router.get('/search', [check('keyword').not().isEmpty()], common.asyncWrapper(as
   }
 }));
 
+/* イベント一覧取得 */
+router.get('/event', [], common.asyncWrapper(async (req, res, next) => {
+  let eventList = [];
+  try {
+    const eventRes = await fetch(constants.url.eventList);
+    const eventResHtml = await eventRes.text();
+    const dom = new JSDOM(eventResHtml);
+    const events = dom.window.document.getElementById("js-more-section-soon").getElementsByTagName("li");
+
+    for (let data of events) {
+      eventList.push({
+        url: data.getElementsByTagName("a")[0].href.replace('/event/', ''),
+        img: data.getElementsByTagName('img')[0].src,
+        date: new Date(data.getElementsByClassName("tx-renew-date")[0].textContent.split('\n')[3].replace('      ', '').split(' - ')[0])
+      })
+    }
+
+    eventList.sort((a, b) => {
+      if (a.date > b.date) return 1
+      if (a.date < b.date) return -1
+      return 0
+    })
+
+    res.json(eventList);
+  } catch (error) {
+    console.log(error);
+    res.json(eventList);
+  }
+}));
+
 function getIP(req) {
   if (req.headers['x-forwarded-for']) {
     return req.headers['x-forwarded-for'];

@@ -17,3 +17,33 @@ exports.exeApi = url => {
     });
   });
 };
+
+exports.dbConnect = (connection) => {
+  return new Promise((resolve, reject) => {
+    connection.connect((err) => err ? reject(err) : resolve());
+  });
+};
+
+exports.selectDb = (connection, sql, parameter) => {
+  return new Promise((resolve, reject) => {
+    connection.query(sql, parameter, function (err, rows, fields) {
+      if (err) reject();
+      resolve(rows);
+    });
+  });
+};
+
+exports.transactionDb = (connection, sql, parameter) => {
+  return new Promise((resolve, reject) => {
+    connection.beginTransaction(err => {
+      if (err) reject()
+      connection.query(sql, parameter, err => {
+        if (err) connection.rollback(() => reject())
+      });
+      connection.commit(err => {
+        if (err) connection.rollback(() => reject())
+        resolve();
+      });
+    });
+  });
+};
