@@ -1,4 +1,5 @@
 const request = require('then-request');
+require('dotenv').config();
 
 exports.asyncWrapper = fn => {
   return (req, res, next) => {
@@ -26,7 +27,7 @@ exports.dbConnect = (connection) => {
 
 exports.selectDb = (connection, sql, parameter) => {
   return new Promise((resolve, reject) => {
-    connection.query(sql, parameter, function (err, rows, fields) {
+    connection.query(sql, parameter, (err, rows, fields) => {
       if (err) reject();
       resolve(rows);
     });
@@ -47,3 +48,16 @@ exports.transactionDb = (connection, sql, parameter) => {
     });
   });
 };
+
+exports.mysqlSetting = () => {
+  return {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    charset: process.env.DB_CHARSET,
+    ssl: {
+      rejectUnauthorized: process.env.DB_SSL
+    }
+  };
+}

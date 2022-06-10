@@ -14,7 +14,7 @@ const constants = require('../constants');
 const env = process.env;
 
 // 接続情報
-const connection = mysql.createConnection(process.env.PLANETSCALE_DATABASE_URL);
+const connection = mysql.createConnection(common.mysqlSetting());
 
 // LINEトークン
 myLine.setToken(env.LINE_API_KEY);
@@ -36,7 +36,7 @@ const getAt = Math.floor(new Date().getTime() / 1000);
     // DBに接続して更新対象のイベントIDを取得
     const updateEventList = await common.selectDb(connection, constants.sql.select.updateEventList, [getAt]);
     // 対象イベントが0件だったら終了
-    if (updateEventList.length === 0) throw `イベント件数:${updateEventList.length}件`;
+    if (updateEventList.length === 0) return;
     console.log(`イベント件数：${updateEventList.length}件`);
     // イベント毎にループ
     for (let updateEvent of updateEventList) {

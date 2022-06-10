@@ -20,6 +20,8 @@ const minecraftRouter = require('./routes/minecraft');
 const otherRouter = require('./routes/other');
 const roomRouter = require('./routes/room');
 const usersRouter = require('./routes/users');
+const eventsRouter = require('./routes/events');
+const historyRouter = require('./routes/history');
 
 const app = express();
 
@@ -64,6 +66,8 @@ app.use('/minecraft', minecraftRouter);
 app.use('/other', otherRouter);
 app.use('/room', roomRouter);
 app.use('/users', usersRouter);
+app.use('/events', eventsRouter);
+app.use('/history', historyRouter);
 
 app.use((req, res, next) => {
   res.status(404).json({ status: "404 not found" });
