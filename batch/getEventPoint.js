@@ -20,7 +20,11 @@ const connection = mysql.createConnection(common.mysqlSetting());
 myLine.setToken(env.LINE_API_KEY);
 
 // 現在日時
-const getAt = Math.floor(new Date().getTime() / 1000);
+let date = new Date();
+let startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), "00", "00");
+let startUnixDate = Math.round(startDate.getTime() / 1000);
+
+const getAt = startUnixDate;
 
 (async () => {
   console.log('処理開始');
@@ -37,11 +41,13 @@ const getAt = Math.floor(new Date().getTime() / 1000);
     const updateEventList = await common.selectDb(connection, constants.sql.select.updateEventList, [getAt]);
     // 対象イベントが0件だったら終了
     if (updateEventList.length === 0) return;
-    console.log(`イベント件数：${updateEventList.length}件`);
+    console.log(`イベント件数:${updateEventList.length}件`);
     // イベント毎にループ
     for (let updateEvent of updateEventList) {
       const updateEventId = updateEvent.event_id;
       const updateEventUrl = updateEvent.event_url;
+      console.log(`イベントID:${updateEventId}`)
+      console.log(`イベントURL:${updateEventUrl}`)
       // イベントの参加者を取得（Web）
       const eventRes = await fetch(updateEventUrl);
       // イベント情報取得確認
@@ -74,6 +80,7 @@ const getAt = Math.floor(new Date().getTime() / 1000);
       // イベント毎のインサートデータ
       let insertEventPoint = [];
       for (let roomId of eventUsers) {
+        console.log(`-> ${roomId}`)
         // ルーム情報の更新
         const rommRes = await fetch(`${constants.url.room.profile}${roomId}`);
         const roomResJson = await rommRes.json();
@@ -111,16 +118,21 @@ const getAt = Math.floor(new Date().getTime() / 1000);
           } else {
             // データをセット
             const eventAndSupportResJson = await eventAndSupportRes.json();
-            insertEventPoint.push({
-              event_id: updateEventId,
-              room_id: roomId,
-              get_at: getAt,
-              follower_num: roomResJson.follower_num,
-              gap: eventAndSupportResJson.event.ranking.gap,
-              next_rank: eventAndSupportResJson.event.ranking.next_rank,
-              point: eventAndSupportResJson.event.ranking.point,
-              now_rank: eventAndSupportResJson.event.ranking.rank
-            });
+            if (eventAndSupportResJson.event === null) {
+              console.log(`  -> ${roomId}はイベントに参加していません`)
+              myLine.notify(`\nイベントポイント更新処理\nevent_and_supportでnull:${roomId}`);
+            } else {
+              insertEventPoint.push({
+                event_id: updateEventId,
+                room_id: roomId,
+                get_at: getAt,
+                follower_num: roomResJson.follower_num,
+                gap: eventAndSupportResJson.event.ranking.gap,
+                next_rank: eventAndSupportResJson.event.ranking.next_rank,
+                point: eventAndSupportResJson.event.ranking.point,
+                now_rank: eventAndSupportResJson.event.ranking.rank
+              });
+            }
           }
         }
       }
