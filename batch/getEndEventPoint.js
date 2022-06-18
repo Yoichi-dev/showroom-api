@@ -28,43 +28,68 @@ myLine.setToken(env.LINE_API_KEY);
 
   const getAt = endUnixDate;
 
+  // DB接続
   try {
-    // DB接続
     await common.dbConnect(connection);
-    // DBに接続して登録予定のイベントリストを取得
-    const endEventList = await common.selectDb(connection, constants.sql.select.endEventList, [getAt]);
-    // イベントリストが0件だったら終了
-    if (endEventList.length === 0) return;
-    console.log(`イベント件数:${endEventList.length}件`);
-    // イベント毎にループ
-    for (let endEventObj of endEventList) {
-      const endEventId = endEventObj.event_id;
-      const endEventUrl = endEventObj.event_url;
-      // イベントの参加者を取得（Web）
-      const eventRes = await fetch(endEventUrl);
-      // イベント情報取得確認
-      if (eventRes.status !== 200) {
-        myLine.notify(`\n終了イベント情報取得失敗\nイベントURL:${endEventUrl}`);
-        continue;
-      }
-      // イベントページから参加者を取得
-      const eventHtml = await eventRes.text();
-      const eventDom = new JSDOM(eventHtml);
-      const eventDocument = eventDom.window.document;
-      const eventNodes = eventDocument.getElementsByClassName('js-follow-btn');
-      const eventUsers = Array.from(eventNodes, rooms => rooms.dataset.roomId);
-      // イベントに参加しているユーザが居なければスキップ
-      if (eventUsers.length === 0) {
-        continue;
-      }
-      // イベント毎のインサートデータ
-      let insertEventPoint = [];
-      // イベント情報登録フラグ
-      for (let roomId of eventUsers) {
-        // ルーム情報の更新
+  } catch (e) {
+    console.log('---異常終了---');
+    console.log(e);
+    console.log('--------------');
+    myLine.notify(`\nDB接続失敗`);
+    return;
+  }
+  // DBに接続して登録予定のイベントリストを取得
+  const endEventList = await common.selectDb(connection, constants.sql.select.endEventList, [getAt]);
+  // イベントリストが0件だったら終了
+  if (endEventList.length === 0) {
+    connection.end();
+    console.log('処理終了');
+    return;
+  }
+  console.log(`イベント件数:${endEventList.length}件`);
+  // イベント毎にループ
+  for (let endEventObj of endEventList) {
+    const endEventId = endEventObj.event_id;
+    const endEventUrl = endEventObj.event_url;
+    console.log(`イベントID:${endEventId}`)
+    console.log(`イベントURL:${endEventUrl}`)
+    // イベントの参加者を取得（Web）
+    const eventRes = await fetch(endEventUrl);
+    // イベント情報取得確認
+    if (eventRes.status !== 200) {
+      myLine.notify(`\n終了イベント情報取得失敗\nイベントURL:${endEventUrl}`);
+      continue;
+    }
+    // イベントページから参加者を取得
+    const eventHtml = await eventRes.text();
+    const eventDom = new JSDOM(eventHtml);
+    const eventDocument = eventDom.window.document;
+    const eventNodes = eventDocument.getElementsByClassName('js-follow-btn');
+    const eventUsers = Array.from(eventNodes, rooms => rooms.dataset.roomId);
+    // イベントに参加しているユーザが居なければスキップ
+    if (eventUsers.length === 0) {
+      continue;
+    }
+    // イベント毎のインサートデータ
+    let insertEventPoint = [];
+    // 成功フラグ
+    let successFlg = true;
+    for (let roomId of eventUsers) {
+      console.log(`-> ${roomId}`)
+      // ルーム情報の更新
+      let roomResJson = null;
+      try {
         const rommRes = await fetch(`${constants.url.room.profile}${roomId}`);
-        const roomResJson = await rommRes.json();
+        roomResJson = await rommRes.json();
         await common.transactionDb(connection, constants.sql.update.roomName, [roomId, roomResJson.room_name, roomResJson.room_url_key, roomResJson.room_name, roomResJson.room_url_key]);
+      } catch (e) {
+        console.log('---異常終了---');
+        console.log(e);
+        console.log('--------------');
+        myLine.notify(`\n${roomId}のルーム情報取得・更新に失敗`);
+        successFlg = false;
+      }
+      try {
         // 現在プレミアムライブ中か
         if (roomResJson.premium_room_type === 1) {
           // 1個前のデータを取得して更新
@@ -78,19 +103,33 @@ myLine.setToken(env.LINE_API_KEY);
           } else {
             // データをセット
             const eventAndSupportResJson = await eventAndSupportRes.json();
-            insertEventPoint.push({
-              event_id: endEventId,
-              room_id: roomId,
-              get_at: getAt,
-              follower_num: roomResJson.follower_num,
-              gap: eventAndSupportResJson.event.ranking.gap,
-              next_rank: eventAndSupportResJson.event.ranking.next_rank,
-              point: eventAndSupportResJson.event.ranking.point,
-              now_rank: eventAndSupportResJson.event.ranking.rank
-            });
+            if (eventAndSupportResJson.event === null) {
+              console.log(`  -> ${roomId}はイベントに参加していません`)
+              myLine.notify(`\nイベントポイント更新処理\nevent_and_supportでnull:${roomId}`);
+            } else {
+              insertEventPoint.push({
+                event_id: endEventId,
+                room_id: roomId,
+                get_at: getAt,
+                follower_num: roomResJson.follower_num,
+                gap: eventAndSupportResJson.event.ranking.gap,
+                next_rank: eventAndSupportResJson.event.ranking.next_rank,
+                point: eventAndSupportResJson.event.ranking.point,
+                now_rank: eventAndSupportResJson.event.ranking.rank
+              });
+            }
           }
         }
+      } catch (e) {
+        console.log('---異常終了---');
+        console.log(e);
+        console.log('--------------');
+        myLine.notify(`\n${roomId}の情報取得に失敗\neventid:${updateEventId}\ntime:${getAt}`);
+        successFlg = false;
       }
+    }
+    if (successFlg) {
+      // インサート出来る形式に変換
       let insertArry = [];
       for (let insertData of insertEventPoint) {
         insertArry.push([
@@ -106,18 +145,12 @@ myLine.setToken(env.LINE_API_KEY);
       }
       // インサート
       await common.transactionDb(connection, constants.sql.insert.history, [insertArry]);
+    } else {
+      myLine.notify(`\nイベント情報取得失敗\n登録失敗\nイベントID:${updateEventId}`);
     }
-    // 登録予定のイベントリストを削除
-    await common.transactionDb(connection, constants.sql.delete.scheduledEvents, [getAt]);
-  } catch (e) {
-    console.log('---異常終了---');
-    console.log(e);
-    console.log('--------------');
-    myLine.notify(`\nイベント予定登録処理失敗\n${e}`);
-  } finally {
-    // 接続切断
-    connection.end();
   }
+  // 接続を終了
+  connection.end();
   console.log('処理終了');
 })();
 
