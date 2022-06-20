@@ -1,5 +1,4 @@
 const request = require('then-request');
-require('dotenv').config();
 
 exports.asyncWrapper = fn => {
   return (req, res, next) => {

@@ -6,7 +6,7 @@ const logger = require('morgan');
 const helmet = require('helmet');
 const rfs = require("rotating-file-stream").createStream;
 
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, ".env") });
 const ENV = process.env;
 
 const logDirectory = path.join(__dirname, './log');
