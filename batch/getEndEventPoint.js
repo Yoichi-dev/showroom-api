@@ -39,7 +39,7 @@ myLine.setToken(env.LINE_API_KEY);
     return;
   }
   // DBに接続して登録予定のイベントリストを取得
-  const endEventList = await common.selectDb(connection, constants.sql.select.endEventList, [getAt]);
+  const endEventList = await common.selectDb(connection, constants.sql.select.endUpdateEventList, [getAt]);
   // イベントリストが0件だったら終了
   if (endEventList.length === 0) {
     connection.end();

@@ -36,7 +36,7 @@ const constants = {
       lastPointData: "SELECT * FROM event_history WHERE room_id = ? AND event_id = ? AND get_at = (SELECT MAX(get_at) FROM event_history WHERE room_id = ? AND event_id = ?)",
       scheduledEvents: "SELECT event_url FROM scheduled_event WHERE started_at = ?",
       historyAtList: "SELECT DISTINCT(get_at) AS 'get_at' FROM event_history WHERE event_id = ? GROUP BY get_at ORDER BY get_at",
-      endEventList: "SELECT event_id, event_url FROM events WHERE ended_at = ?",
+      endUpdateEventList: "SELECT event_id, event_url FROM events WHERE ended_at = ?",
       eventList: "SELECT * FROM events ORDER BY started_at DESC",
       holdEventList: "SELECT * FROM events WHERE started_at < ? AND ended_at > ? ORDER BY started_at DESC",
       endEventList: "SELECT * FROM events WHERE ended_at <= ? ORDER BY started_at DESC",
