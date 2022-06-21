@@ -22,6 +22,7 @@ const roomRouter = require('./routes/room');
 const usersRouter = require('./routes/users');
 const eventsRouter = require('./routes/events');
 const historyRouter = require('./routes/history');
+const pointHistoryRouter = require('./routes/pointhistory');
 
 const app = express();
 
@@ -68,6 +69,7 @@ app.use('/room', roomRouter);
 app.use('/users', usersRouter);
 app.use('/events', eventsRouter);
 app.use('/history', historyRouter);
+app.use('/pointhistory', pointHistoryRouter);
 
 app.use((req, res, next) => {
   res.status(404).json({ status: "404 not found" });
