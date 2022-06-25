@@ -6,9 +6,6 @@ const fetch = require('node-fetch');
 const https = require('https')
 const http = require('http')
 
-const Line = require('../line');
-const myLine = new Line();
-
 const common = require('../common');
 
 // 設定値
@@ -17,9 +14,6 @@ const env = process.env;
 
 // 接続情報
 const connection = mysql.createConnection(common.mysqlSetting());
-
-// LINEトークン
-myLine.setToken(env.LINE_API_KEY);
 
 const getAt = process.argv[2];
 
@@ -47,7 +41,6 @@ function get_redirect_url(src_url) {
     console.log('---異常終了---');
     console.log(e);
     console.log('--------------');
-    myLine.notify(`\nDB接続失敗`);
     return;
   }
   // DBに接続して更新対象のイベントIDを取得
@@ -77,9 +70,7 @@ function get_redirect_url(src_url) {
       try {
         const rommRes = await fetch(`${constants.url.room.profile}${roomId}`);
         roomResJson = await rommRes.json();
-
         if (roomResJson.sns_list) {
-
           if (roomResJson.sns_list[0].name === 'Twitter') {
             const redirect_url = await get_redirect_url(roomResJson.sns_list[0].url)
               .catch(err => {
