@@ -32,6 +32,7 @@ const constants = {
   sql: {
     select: {
       updateEventList: "SELECT event_id, event_url FROM events where ended_at > ?",
+      twitter: "SELECT event_id, event_url, event_name FROM events where started_at = ?",
       registeredUsers: "SELECT room_id FROM event_history WHERE event_id = ? GROUP BY room_id",
       lastPointData: "SELECT * FROM event_history WHERE room_id = ? AND event_id = ? AND get_at = (SELECT MAX(get_at) FROM event_history WHERE room_id = ? AND event_id = ?)",
       scheduledEvents: "SELECT event_url FROM scheduled_event WHERE started_at = ?",
