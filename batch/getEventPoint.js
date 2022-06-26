@@ -43,6 +43,9 @@ const getAt = startUnixDate;
     myLine.notify(`\nDB接続失敗`);
     return;
   }
+  if (env.LINE_FLG) {
+    myLine.notify(`\n${nowHours}時の集計を開始します\n処理時間key:${getAt}`);
+  }
   // DBに接続して更新対象のイベントIDを取得
   const updateEventList = await common.selectDb(connection, constants.sql.select.updateEventList, [getAt]);
   // 対象イベントが0件だったら終了
@@ -184,6 +187,9 @@ const getAt = startUnixDate;
     } else {
       myLine.notify(`\nイベント情報取得失敗\n登録失敗\nイベントID:${updateEventId}`);
     }
+  }
+  if (env.LINE_FLG) {
+    myLine.notify(`\n${nowHours}時の集計を終了します\n処理件数:${updateEventList.length}`);
   }
   // 接続を終了
   connection.end();
