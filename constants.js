@@ -49,6 +49,7 @@ const constants = {
     },
     update: {
       roomName: "INSERT INTO users (room_id, room_name, room_url_key) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE room_name = ?, room_url_key = ?;",
+      resultPoint: "UPDATE event_history SET point = ?, now_rank = ? WHERE event_id = ? AND room_id = ? AND get_at = ?",
     },
     insert: {
       lastHistoryData: "INSERT INTO event_history SET (SELECT event_id, room_id, ?, follower_num, gap, next_rank, point, now_rank FROM event_history WHERE event_id = ? AND room_id = ? ORDER BY get_at DESC LIMIT 1)",
