@@ -45,6 +45,16 @@ router.get('/broadcast/:room_url_key', [check('room_url_key').not().isEmpty()], 
   res.json(roomStatusJson === null ? {} : roomStatusJson.broadcast_key);
 }));
 
+/* 配信データ取得 */
+router.get('/status/:room_url_key', [check('room_url_key').not().isEmpty()], common.asyncWrapper(async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const roomStatusJson = await common.exeApi(`${constants.url.room.status}${req.params.room_url_key}`);
+  res.json(roomStatusJson === null ? {} : roomStatusJson);
+}));
+
 /* ルーム検索 */
 router.get('/search', [check('keyword').not().isEmpty()], common.asyncWrapper(async (req, res, next) => {
   // 初期化制限
