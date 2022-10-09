@@ -4,9 +4,10 @@ const fs = require('fs-extra');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const helmet = require('helmet');
+const bodyParser = require('body-parser')
 const rfs = require("rotating-file-stream").createStream;
 
-require('dotenv').config({ path: path.join(__dirname, ".env") });
+require('dotenv').config();
 const ENV = process.env;
 
 const logDirectory = path.join(__dirname, './log');
@@ -23,10 +24,12 @@ const usersRouter = require('./routes/users');
 const eventsRouter = require('./routes/events');
 const historyRouter = require('./routes/history');
 const pointHistoryRouter = require('./routes/pointhistory');
+const watchlogRouter = require('./routes/watchlog');
 
 const app = express();
 
 app.use(helmet());
+app.use(bodyParser.json({ limit: '5mb' }))
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
@@ -38,7 +41,7 @@ app.use((req, res, next) => {
     || encodeURI(req.query.key) === ENV.API_KEY) {
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-    res.header('Access-Control-Allow-Methods', 'GET');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
     next();
   } else {
     res.status(401).json({ status: "401 Unauthorized" });
@@ -70,6 +73,7 @@ app.use('/users', usersRouter);
 app.use('/events', eventsRouter);
 app.use('/history', historyRouter);
 app.use('/pointhistory', pointHistoryRouter);
+app.use('/watchlog', watchlogRouter);
 
 app.use((req, res, next) => {
   res.status(404).json({ status: "404 not found" });

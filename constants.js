@@ -16,6 +16,7 @@ const constants = {
       profile: "https://www.showroom-live.com/api/room/profile?room_id=",
       eventAndSupport: "https://www.showroom-live.com/api/room/event_and_support?room_id=",
       status: "https://www.showroom-live.com/api/room/status?room_url_key=",
+      telop: "https://www.showroom-live.com/api/live/telop?room_id="
     },
     user: {
       profile: "https://www.showroom-live.com/api/user/profile?user_id=",
@@ -46,6 +47,10 @@ const constants = {
       historyList: "SELECT * FROM event_history WHERE event_id = ? ORDER BY room_id, get_at",
       userHistoryList: "SELECT * FROM event_history WHERE event_id = ? AND room_id = ? ORDER BY get_at",
       aggregateList: "SELECT * FROM event_history WHERE event_id = ? AND get_at = (select max(get_at) FROM event_history WHERE event_id = ?)",
+      logList: "SELECT log_id FROM watchlog WHERE uuid = ? ORDER BY log_id DESC",
+      log: "SELECT * FROM watchlog WHERE uuid = ? AND log_id = ?",
+      logCheck: "SELECT count(*) AS count FROM watchlog WHERE uuid = ? AND log_id = ?",
+      corruptionCheck: "SELECT count(*) AS count FROM watchlogcorruption WHERE uuid = ?"
     },
     update: {
       roomName: "INSERT INTO users (room_id, room_name, room_url_key) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE room_name = ?, room_url_key = ?;",
@@ -55,10 +60,13 @@ const constants = {
       lastHistoryData: "INSERT INTO event_history SET (SELECT event_id, room_id, ?, follower_num, gap, next_rank, point, now_rank FROM event_history WHERE event_id = ? AND room_id = ? ORDER BY get_at DESC LIMIT 1)",
       history: "INSERT INTO event_history VALUES ?",
       eventInfo: "INSERT INTO events SET ?",
+      log: "INSERT INTO watchlog (uuid, log_id, log_json) VALUES (?, ?, ?)",
+      corruption: "INSERT INTO watchlogcorruption (uuid, log_data) VALUES (?, ?)"
     },
     delete: {
       history: "DELETE FROM event_history WHERE event_id = ? AND room_id = ?",
       scheduledEvents: "DELETE FROM scheduled_event WHERE started_at = ?",
+      log: "DELETE FROM watchlog WHERE uuid = ? AND log_id = ?",
     }
   }
 }

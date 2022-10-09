@@ -45,6 +45,16 @@ router.get('/broadcast/:room_url_key', [check('room_url_key').not().isEmpty()], 
   res.json(roomStatusJson === null ? {} : roomStatusJson.broadcast_key);
 }));
 
+/* テロップ取得 */
+router.get('/telop/:room_id', [check('room_id').not().isEmpty()], common.asyncWrapper(async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const telopStatusJson = await common.exeApi(`${constants.url.room.telop}${req.params.room_id}`);
+  res.json(telopStatusJson === null ? {} : telopStatusJson.telop);
+}));
+
 /* 配信データ取得 */
 router.get('/status/:room_url_key', [check('room_url_key').not().isEmpty()], common.asyncWrapper(async (req, res, next) => {
   const errors = validationResult(req);
@@ -82,9 +92,9 @@ router.get('/search', [check('keyword').not().isEmpty()], common.asyncWrapper(as
         searchData.push(
           {
             img: roomData.image,
-            id: search[i].getElementsByClassName('listcardinfo-image')[0].getElementsByClassName('room-url')[0].dataset.roomId,
-            url: search[i].getElementsByClassName('listcardinfo-image')[0].getElementsByClassName('room-url')[0].href,
-            title: search[i].getElementsByClassName('listcardinfo-main-text')[0].textContent
+            id: roomData.room_id,
+            url: roomData.room_url_key,
+            title: roomData.main_name
           }
         )
       }
