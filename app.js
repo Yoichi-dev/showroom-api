@@ -34,6 +34,8 @@ app.use(bodyParser.json({ limit: '5mb' }))
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (/^https:\/\/.+\.showroom-app\.com$/.test(origin)
+    || /^https:\/\/watch-log\.showroom-app\.com$/.test(origin)
+    || /^https:\/\/watch-log-beta\.showroom-app\.com$/.test(origin)
     || /^https:\/\/musica-streaming\.netlify\.app$/.test(origin)
     || /^https:\/\/yukino-comment\.netlify\.app$/.test(origin)
     || /^https:\/\/tem-comment\.netlify\.app$/.test(origin)
