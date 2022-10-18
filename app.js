@@ -11,9 +11,7 @@ require('dotenv').config({ path: path.join(__dirname, ".env") });
 const ENV = process.env;
 
 const logDirectory = path.join(__dirname, './log');
-if (!ENV.HEROKU) {
-  fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
-}
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 
 const indexRouter = require('./routes/index');
 const liveRouter = require('./routes/live');
@@ -48,16 +46,12 @@ app.use((req, res, next) => {
   }
 });
 
-if (!ENV.HEROKU) {
-  const accessLogStream = rfs('access.log', {
-    interval: '1d',
-    compress: 'gzip',
-    path: logDirectory
-  });
-  app.use(logger('combined', { stream: accessLogStream }))
-} else {
-  app.use(logger('combined'));
-}
+const accessLogStream = rfs('access.log', {
+  interval: '1d',
+  compress: 'gzip',
+  path: logDirectory
+});
+app.use(logger('combined', { stream: accessLogStream }))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
