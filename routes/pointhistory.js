@@ -71,4 +71,22 @@ router.get('/event/:event_id/:room_id', [check('event_id').not().isEmpty().isNum
   res.json(allData);
 }));
 
+/* イベント存在チェック */
+router.get('/check/:event_id/:room_id', [check('event_id').not().isEmpty().isNumeric(), check('room_id').not().isEmpty().isNumeric()], common.asyncWrapper(async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const connection = mysql.createConnection(common.mysqlSetting());
+  await common.dbConnect(connection);
+  // チェック
+  const db_check = await common.selectDb(connection, constants.sql.select.check, [req.params.event_id, req.params.room_id]);
+  let checkFlg = true;
+  if (db_check[0].count === 0) {
+    checkFlg = false;
+  }
+  connection.end();
+  res.json(checkFlg);
+}));
+
 module.exports = router;

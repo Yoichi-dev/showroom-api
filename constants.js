@@ -50,7 +50,8 @@ const constants = {
       logList: "SELECT log_id FROM watchlog WHERE uuid = ? ORDER BY log_id DESC",
       log: "SELECT * FROM watchlog WHERE uuid = ? AND log_id = ?",
       logCheck: "SELECT count(*) AS count FROM watchlog WHERE uuid = ? AND log_id = ?",
-      corruptionCheck: "SELECT count(*) AS count FROM watchlogcorruption WHERE uuid = ?"
+      corruptionCheck: "SELECT count(*) AS count FROM watchlogcorruption WHERE uuid = ?",
+      check: "SELECT count(*) AS count FROM event_history WHERE event_id = ? AND room_id = ?"
     },
     update: {
       roomName: "INSERT INTO users (room_id, room_name, room_url_key) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE room_name = ?, room_url_key = ?;",
