@@ -27,7 +27,9 @@ const watchlogRouter = require('./routes/watchlog');
 const app = express();
 
 app.use(helmet());
-app.use(bodyParser.json({ limit: '5mb' }))
+app.use(bodyParser.json({ limit: '5mb' }));
+
+app.set('trust proxy', 'loopback, linklocal, uniquelocal');
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
@@ -51,7 +53,7 @@ const accessLogStream = rfs('access.log', {
   compress: 'gzip',
   path: logDirectory
 });
-app.use(logger('combined', { stream: accessLogStream }))
+app.use(logger('combined', { stream: accessLogStream }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
