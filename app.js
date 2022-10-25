@@ -23,6 +23,7 @@ const eventsRouter = require('./routes/events');
 const historyRouter = require('./routes/history');
 const pointHistoryRouter = require('./routes/pointhistory');
 const watchlogRouter = require('./routes/watchlog');
+const youtubeRouter = require('./routes/youtube');
 
 const app = express();
 
@@ -70,6 +71,7 @@ app.use('/events', eventsRouter);
 app.use('/history', historyRouter);
 app.use('/pointhistory', pointHistoryRouter);
 app.use('/watchlog', watchlogRouter);
+app.use('/youtube', youtubeRouter);
 
 app.use((req, res, next) => {
   res.status(404).json({ status: "404 not found" });
