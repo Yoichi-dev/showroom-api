@@ -12,7 +12,8 @@ router.get('/', [], function (req, res, next) {
 router.get('/channel/:channel', [check('channel').not().isEmpty()], common.asyncWrapper(async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    res.status(422).json({ errors: errors.array() });
+    return
   }
 
   let resJson = {
@@ -30,7 +31,9 @@ router.get('/channel/:channel', [check('channel').not().isEmpty()], common.async
         .split(':')[1]
         .replace(/"/g, '');
 
-      const continuation = searchResHtml.match(/continuation":".*?"/)[0]
+      const continuations = searchResHtml.match(/"continuations":\[{"reloadContinuationData":{"continuation":".*?"/)[0];
+
+      const continuation = continuations.match(/continuation":".*?"/)[0]
         .split(':')[1]
         .replace(/"/g, '');
 
@@ -86,6 +89,7 @@ router.post('/comment', common.asyncWrapper(async (req, res, next) => {
       continuation: req.body.continuation,
     }).catch(e => {
       console.log(e)
+      throw new Error('getError')
     });
 
     // 次のパラメーター
@@ -143,7 +147,7 @@ router.post('/comment', common.asyncWrapper(async (req, res, next) => {
 
   } catch (error) {
     console.log(error);
-    res.json({});
+    res.status(500).json({});
   }
 }));
 
