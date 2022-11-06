@@ -80,4 +80,14 @@ router.get('/gift_log/:room_id', [check('room_id').not().isEmpty().isNumeric()],
   res.json(giftLog);
 }));
 
+/*  累計ランキング */
+router.get('/summary_ranking/:room_id', [check('room_id').not().isEmpty().isNumeric()], common.asyncWrapper(async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const ranking = await common.exeApi(`${constants.url.live.summaryRanking}${req.params.room_id}`);
+  res.json(ranking);
+}));
+
 module.exports = router;

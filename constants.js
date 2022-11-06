@@ -11,6 +11,7 @@ const constants = {
       liveInfo: "https://www.showroom-live.com/api/live/live_info?room_id=",
       commentLog: "https://www.showroom-live.com/api/live/comment_log?room_id=",
       giftLog: "https://www.showroom-live.com/api/live/gift_log?room_id=",
+      summaryRanking: "https://www.showroom-live.com/api/live/summary_ranking?room_id="
     },
     room: {
       profile: "https://www.showroom-live.com/api/room/profile?room_id=",
