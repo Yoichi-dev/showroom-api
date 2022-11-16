@@ -19,6 +19,9 @@ const constants = {
       status: "https://www.showroom-live.com/api/room/status?room_url_key=",
       telop: "https://www.showroom-live.com/api/live/telop?room_id="
     },
+    event: {
+      contributionRanking: "https://www.showroom-live.com/api/event/contribution_ranking?room_id="
+    },
     user: {
       profile: "https://www.showroom-live.com/api/user/profile?user_id=",
     }

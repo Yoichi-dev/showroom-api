@@ -71,4 +71,14 @@ router.get('/users/:event_id', [check('event_id').not().isEmpty().isNumeric()], 
   res.json(db_event_user);
 }));
 
+/* イベント貢献ランキング */
+router.get('/contribution_ranking/:user_id', [check('user_id').not().isEmpty().isNumeric()], common.asyncWrapper(async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const contributionRanking = await common.exeApi(`${constants.url.event.contributionRanking}${req.params.user_id}`);
+  res.json(contributionRanking);
+}));
+
 module.exports = router;
