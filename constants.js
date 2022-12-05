@@ -1,7 +1,7 @@
 const constants = {
   url: {
     main: "https://www.showroom-live.com",
-    event: "https://www.showroom-live.com/event/",
+    eventData: "https://www.showroom-live.com/event/",
     eventList: "https://www.showroom-live.com/event#soon",
     search: "https://www.showroom-live.com/room/search?genre_id=0&keyword=",
     live: {

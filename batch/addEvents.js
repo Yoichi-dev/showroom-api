@@ -41,7 +41,7 @@ myLine.setToken(env.LINE_API_KEY);
     for (let planEventUrlObj of planEventList) {
       const planEventUrl = planEventUrlObj.event_url;
       // イベントの参加者を取得（Web）
-      const eventRes = await fetch(`${constants.url.event}${planEventUrl}`);
+      const eventRes = await fetch(`${constants.url.eventData}${planEventUrl}`);
       // イベント情報取得確認
       if (eventRes.status !== 200) {
         myLine.notify(`\nイベント情報取得失敗\nイベントURL:${planEventUrl}`);
@@ -73,7 +73,7 @@ myLine.setToken(env.LINE_API_KEY);
             // ルームポイント情報からイベント情報取得
             const eventAndSupportRes = await fetch(`${constants.url.room.eventAndSupport}${roomId}`);
             const eventAndSupportResJson = await eventAndSupportRes.json();
-            if (planEventUrl === eventAndSupportResJson.event.event_url.replace(constants.url.event, '')) {
+            if (planEventUrl === eventAndSupportResJson.event.event_url.replace(constants.url.eventData, '')) {
               const eventIndoData = {
                 event_id: eventAndSupportResJson.event.event_id,
                 event_name: eventAndSupportResJson.event.event_name,
