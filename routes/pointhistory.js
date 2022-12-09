@@ -72,7 +72,7 @@ router.get('/event/:event_id/:room_id', [check('event_id').not().isEmpty().isNum
 }));
 
 /* イベント存在チェック */
-router.get('/check/:event_id/:room_id', [check('event_id').not().isEmpty().isNumeric(), check('room_id').not().isEmpty().isNumeric()], common.asyncWrapper(async (req, res, next) => {
+router.post('/check', [check('event_id').not().isEmpty().isNumeric(), check('room_id').not().isEmpty().isNumeric()], common.asyncWrapper(async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });

@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const helmet = require('helmet');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const rfs = require("rotating-file-stream").createStream;
 
 require('dotenv').config({ path: path.join(__dirname, ".env") });
@@ -14,16 +14,11 @@ const logDirectory = path.join(__dirname, './log');
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 
 const indexRouter = require('./routes/index');
-const liveRouter = require('./routes/live');
-const minecraftRouter = require('./routes/minecraft');
-const otherRouter = require('./routes/other');
-const roomRouter = require('./routes/room');
-const usersRouter = require('./routes/users');
 const eventsRouter = require('./routes/events');
 const historyRouter = require('./routes/history');
+const showroomRouter = require('./routes/showroom');
 const pointHistoryRouter = require('./routes/pointhistory');
 const watchlogRouter = require('./routes/watchlog');
-// const youtubeRouter = require('./routes/youtube');
 
 const app = express();
 
@@ -62,16 +57,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/live', liveRouter);
-app.use('/minecraft', minecraftRouter);
-app.use('/other', otherRouter);
-app.use('/room', roomRouter);
-app.use('/users', usersRouter);
 app.use('/events', eventsRouter);
 app.use('/history', historyRouter);
 app.use('/pointhistory', pointHistoryRouter);
 app.use('/watchlog', watchlogRouter);
-// app.use('/youtube', youtubeRouter);
+app.use('/showroom', showroomRouter);
 
 app.use((req, res, next) => {
   res.status(404).json({ status: "404 not found" });

@@ -1,35 +1,32 @@
 const constants = {
   url: {
-    main: "https://www.showroom-live.com",
-    eventData: "https://www.showroom-live.com/event/",
-    eventList: "https://www.showroom-live.com/event#soon",
-    search: "https://www.showroom-live.com/room/search?genre_id=0&keyword=",
+    base: "https://www.showroom-live.com",
+    eventData: "/event/",
+    eventList: "/event#soon",
     live: {
-      onlives: "https://www.showroom-live.com/api/live/onlives",
-      giftList: "https://www.showroom-live.com/api/live/gift_list?room_id=",
-      stageUserList: "https://www.showroom-live.com/api/live/stage_user_list?room_id=",
-      liveInfo: "https://www.showroom-live.com/api/live/live_info?room_id=",
-      commentLog: "https://www.showroom-live.com/api/live/comment_log?room_id=",
-      giftLog: "https://www.showroom-live.com/api/live/gift_log?room_id=",
-      summaryRanking: "https://www.showroom-live.com/api/live/summary_ranking?room_id="
+      onlives: "/api/live/onlives?_=",
+      gift_list: "/api/live/gift_list?room_id=",
+      stage_user_list: "/api/live/stage_user_list?room_id=",
+      live_info: "/api/live/live_info?room_id=",
+      comment_log: "/api/live/comment_log?room_id=",
+      gift_log: "/api/live/gift_log?room_id=",
+      summary_ranking: "/api/live/summary_ranking?room_id="
     },
     room: {
-      profile: "https://www.showroom-live.com/api/room/profile?room_id=",
-      eventAndSupport: "https://www.showroom-live.com/api/room/event_and_support?room_id=",
-      status: "https://www.showroom-live.com/api/room/status?room_url_key=",
-      telop: "https://www.showroom-live.com/api/live/telop?room_id="
+      profile: "/api/room/profile?room_id=",
+      event_and_support: "/api/room/event_and_support?room_id=",
+      status: "/api/room/status?room_url_key=",
+      telop: "/api/live/telop?room_id="
     },
     event: {
-      contributionRanking: "https://www.showroom-live.com/api/event/contribution_ranking?room_id="
+      contribution_ranking: "/api/event/contribution_ranking?room_id="
     },
     user: {
-      profile: "https://www.showroom-live.com/api/user/profile?user_id=",
+      profile: "/api/user/profile?user_id=",
+    },
+    other: {
+      search: "/room/search?genre_id=0&keyword=",
     }
-  },
-  minecraft: {
-    url: "minecraft.showroom-app.com",
-    port: 4466,
-    api: "https://api.mojang.com/users/profiles/minecraft/"
   },
   line: {
     api: "https://notify-api.line.me/api/notify"
