@@ -80,7 +80,7 @@ myLine.setToken(env.LINE_API_KEY);
       // ルーム情報の更新
       let roomResJson = null;
       try {
-        const rommRes = await fetch(`${constants.url.room.profile}${roomId}`);
+        const rommRes = await fetch(`${constants.url.base}${constants.url.room.profile}${roomId}`);
         roomResJson = await rommRes.json();
         await common.transactionDb(connection, constants.sql.update.roomName, [roomId, roomResJson.room_name, roomResJson.room_url_key, roomResJson.room_name, roomResJson.room_url_key]);
       } catch (e) {
@@ -97,7 +97,7 @@ myLine.setToken(env.LINE_API_KEY);
           await common.transactionDb(connection, constants.sql.insert.lastHistoryData, [getAt, endEventId, roomId]);
         } else {
           // ルームポイント情報取得
-          const eventAndSupportRes = await fetch(`${constants.url.room.eventAndSupport}${roomId}`);
+          const eventAndSupportRes = await fetch(`${constants.url.base}${constants.url.room.event_and_support}${roomId}`);
           if (eventAndSupportRes.status !== 200) {
             // 1個前のデータを取得して更新
             await common.transactionDb(connection, constants.sql.insert.lastHistoryData, [getAt, endEventId, roomId]);

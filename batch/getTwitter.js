@@ -69,7 +69,7 @@ function get_redirect_url(src_url) {
       // ルーム情報の更新
       let roomResJson = null;
       try {
-        const rommRes = await fetch(`${constants.url.room.profile}${roomId}`);
+        const rommRes = await fetch(`${constants.url.base}${constants.url.room.profile}${roomId}`);
         roomResJson = await rommRes.json();
         if (roomResJson.sns_list) {
           if (roomResJson.sns_list[0].name === 'Twitter') {

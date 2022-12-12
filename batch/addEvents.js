@@ -41,7 +41,7 @@ myLine.setToken(env.LINE_API_KEY);
     for (let planEventUrlObj of planEventList) {
       const planEventUrl = planEventUrlObj.event_url;
       // イベントの参加者を取得（Web）
-      const eventRes = await fetch(`${constants.url.eventData}${planEventUrl}`);
+      const eventRes = await fetch(`${constants.url.base}${constants.url.eventData}${planEventUrl}`);
       // イベント情報取得確認
       if (eventRes.status !== 200) {
         myLine.notify(`\nイベント情報取得失敗\nイベントURL:${planEventUrl}`);
@@ -64,14 +64,14 @@ myLine.setToken(env.LINE_API_KEY);
       let eventId = null;
       for (let roomId of eventUsers) {
         // ルーム情報の更新
-        const rommRes = await fetch(`${constants.url.room.profile}${roomId}`);
+        const rommRes = await fetch(`${constants.url.base}${constants.url.room.profile}${roomId}`);
         const roomResJson = await rommRes.json();
         await common.transactionDb(connection, constants.sql.update.roomName, [roomId, roomResJson.room_name, roomResJson.room_url_key, roomResJson.room_name, roomResJson.room_url_key]);
         // イベント情報登録
         if (!eventIndoFLg) {
           if (roomResJson.premium_room_type === 0) {
             // ルームポイント情報からイベント情報取得
-            const eventAndSupportRes = await fetch(`${constants.url.room.eventAndSupport}${roomId}`);
+            const eventAndSupportRes = await fetch(`${constants.url.base}${constants.url.room.eventAndSupport}${roomId}`);
             const eventAndSupportResJson = await eventAndSupportRes.json();
             if (planEventUrl === eventAndSupportResJson.event.event_url.replace(constants.url.eventData, '')) {
               const eventIndoData = {

@@ -76,7 +76,7 @@ const getAt = endUnixDate;
       // 更新
       for (let userData of eventUserData) {
         const { event_id, room_id, get_at, point, now_rank } = userData
-        const rommRes = await fetch(`${constants.url.room.profile}${room_id}`);
+        const rommRes = await fetch(`${constants.url.base}${constants.url.room.profile}${room_id}`);
         const roomResJson = await rommRes.json();
         insertArry.push([
           event_id,
