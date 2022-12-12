@@ -5,6 +5,18 @@ exports.asyncWrapper = fn => {
   }
 };
 
+exports.exeApi = url => {
+  return new Promise((resolve, reject) => {
+    request('GET', url).done((res) => {
+      if (res.statusCode == 404) {
+        reject(null);
+      } else {
+        resolve(JSON.parse(res.getBody('utf8')));
+      }
+    });
+  });
+};
+
 exports.dbConnect = (connection) => {
   return new Promise((resolve, reject) => {
     connection.connect((err) => err ? reject(err) : resolve());
