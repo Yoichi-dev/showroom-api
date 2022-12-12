@@ -19,7 +19,7 @@
     "jsdom": "^20.0.3",
     "morgan": "~1.9.1",
     "mysql2": "^2.3.3",
-    "node-fetch": "^3.3.0",
+    "node-fetch": "^2.6.7",
     "rotating-file-stream": "^3.0.4"
   }
 }
