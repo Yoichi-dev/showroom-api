@@ -1,5 +1,6 @@
 const express = require('express');
 const mysql = require('mysql2');
+const axios = require('axios');
 const router = express.Router();
 const common = require('../common');
 const { check, validationResult } = require('express-validator');
@@ -10,6 +11,9 @@ const constants = require('../constants');
 router.get('/', function (req, res, next) {
   res.json({ title: 'PointHistory API' });
 });
+
+const client = axios.create({ baseURL: constants.url.base });
+axiosRetry(client, { retries: 3 });
 
 /* イベント情報 */
 router.get('/event/:event_id', [check('event_id').not().isEmpty().isNumeric()], common.asyncWrapper(async (req, res, next) => {
@@ -52,7 +56,13 @@ router.get('/event/:event_id/:room_id', [check('event_id').not().isEmpty().isNum
   // イベント情報
   const db_event = await common.selectDb(connection, constants.sql.select.eventDataList, [req.params.event_id]);
   // プロフィール
-  const db_profile = await common.exeApi(`${constants.url.room.profile}${req.params.room_id}`);
+  const db_profile = await client.get(`${constants.url.room.profile}${req.params.room_id}`)
+    .then(result => {
+      return result.data;
+    })
+    .catch(error => {
+      return null;
+    });
   // 個別履歴
   const db_user_history = await common.selectDb(connection, constants.sql.select.userHistoryList, [req.params.event_id, req.params.room_id]);
   // 集計
