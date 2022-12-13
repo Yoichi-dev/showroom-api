@@ -51,16 +51,14 @@ router.get('/search', [check('keyword').not().isEmpty()], common.asyncWrapper(as
     const dom = new JSDOM(searchRes.data);
     const search = dom.window.document.getElementById('room-list').getElementsByClassName('search_res_li');
     for (let i = 0; i < search.length; i++) {
-      if (i < 10) {
-        searchData.push(
-          {
-            img: search[i].getElementsByClassName('listcardinfo-image')[0].getElementsByTagName('img')[0].dataset.src,
-            id: search[i].getElementsByClassName('listcardinfo-image')[0].getElementsByClassName('room-url')[0].dataset.roomId,
-            url: search[i].getElementsByClassName('listcardinfo-image')[0].getElementsByTagName('a')[0].href.replace('/r/', ''),
-            title: search[i].getElementsByClassName('listcardinfo-info')[0].getElementsByTagName('h4')[0].textContent
-          }
-        )
-      }
+      searchData.push(
+        {
+          img: search[i].getElementsByClassName('listcardinfo-image')[0].getElementsByTagName('img')[0].dataset.src,
+          id: search[i].getElementsByClassName('listcardinfo-image')[0].getElementsByClassName('room-url')[0].dataset.roomId,
+          url: search[i].getElementsByClassName('listcardinfo-image')[0].getElementsByTagName('a')[0].href.replace('/r/', ''),
+          title: search[i].getElementsByClassName('listcardinfo-info')[0].getElementsByTagName('h4')[0].textContent
+        }
+      )
     }
     res.json(searchData);
   } catch (error) {
