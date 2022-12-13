@@ -6,6 +6,13 @@ const logger = require('morgan');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const rfs = require("rotating-file-stream").createStream;
+const moment = require('moment-timezone');
+
+const timezone = 'Asia/Tokyo';
+
+logger.token('date', () => {
+  return moment().tz(timezone).format();
+});
 
 require('dotenv').config({ path: path.join(__dirname, ".env") });
 const ENV = process.env;
