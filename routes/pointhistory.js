@@ -91,7 +91,7 @@ router.post('/check', [check('event_id').not().isEmpty().isNumeric(), check('roo
   const connection = mysql.createConnection(common.mysqlSetting());
   await common.dbConnect(connection);
   // チェック
-  const db_check = await common.selectDb(connection, constants.sql.select.check, [req.params.event_id, req.params.room_id]);
+  const db_check = await common.selectDb(connection, constants.sql.select.check, [req.body.event_id, req.body.room_id]);
   let checkFlg = true;
   if (db_check[0].count === 0) {
     checkFlg = false;
