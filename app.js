@@ -39,7 +39,7 @@ app.use((req, res, next) => {
   if (/^https:\/\/.+\.showroom-app\.com$/.test(origin)
     || /^https:\/\/musica-streaming\.netlify\.app$/.test(origin)
     || /^https:\/\/yukino-comment\.netlify\.app$/.test(origin)
-    || /^https:\/\/tem-comment\.netlify\.app$/.test(origin)
+    || /^https:\/\/yamzaki-shizuku\.netlify\.app$/.test(origin)
     || /^https:\/\/showroom-app-api\.herokuapp\.com$/.test(origin)
     || encodeURI(req.query.key) === ENV.API_KEY) {
     res.header('Access-Control-Allow-Origin', origin);
