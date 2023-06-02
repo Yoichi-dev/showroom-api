@@ -28,7 +28,11 @@ router.post('/api', validator, common.asyncWrapper(async (req, res, next) => {
     return res.status(422).json({ errors: "no url" });
   }
 
-  const apiRes = await client.get(constants.url[req.body.category][req.body.type] + req.body.key)
+  const apiRes = await client.get(constants.url[req.body.category][req.body.type] + req.body.key, {
+    headers: {
+      "Accept-Language": 'ja',
+    }
+  })
     .then(result => {
       return result.data;
     })

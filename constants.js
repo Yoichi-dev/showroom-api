@@ -10,7 +10,8 @@ const constants = {
       live_info: "/api/live/live_info?room_id=",
       comment_log: "/api/live/comment_log?room_id=",
       gift_log: "/api/live/gift_log?room_id=",
-      summary_ranking: "/api/live/summary_ranking?room_id="
+      summary_ranking: "/api/live/summary_ranking?room_id=",
+      streaming_url: "/api/live/streaming_url?room_id="
     },
     room: {
       profile: "/api/room/profile?room_id=",
