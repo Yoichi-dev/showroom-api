@@ -28,7 +28,13 @@ router.post('/api', validator, common.asyncWrapper(async (req, res, next) => {
     return res.status(422).json({ errors: "no url" });
   }
 
-  const apiRes = await client.get(constants.url[req.body.category][req.body.type] + req.body.key, {
+  let url = constants.url[req.body.category][req.body.type] + req.body.key
+
+  if ("event" === req.body.category && req.body.key2 !== "") {
+    url += "&event_id=" + req.body.key2
+  }
+
+  const apiRes = await client.get(url, {
     headers: {
       "Accept-Language": 'ja',
     }
@@ -39,7 +45,7 @@ router.post('/api', validator, common.asyncWrapper(async (req, res, next) => {
     .catch(error => {
       return error.response.data;
     });
-  
+
   res.json(apiRes);
 }));
 
